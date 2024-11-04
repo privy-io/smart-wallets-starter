@@ -36,7 +36,7 @@ export default function DashboardPage() {
   };
 
   const onSetApprovalForAll = () => {
-    if (!smartWalletClient) return;
+    if (!smartWalletClient || !smartWalletAddress) return;
 
     smartWalletClient.sendTransaction({
       to: NFT_CONTRACT_ADDRESS,
@@ -49,7 +49,7 @@ export default function DashboardPage() {
   };
 
   const onBatchTransaction = () => {
-    if (!smartWalletClient) return;
+    if (!smartWalletClient || !smartWalletAddress) return;
 
     smartWalletClient.sendTransaction({
       account: smartWalletClient.account,
