@@ -15,7 +15,6 @@
     "stripInternal": true,
     "allowJs": true,
     "noEmit": true,
-    "module": "esnext",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -23,7 +22,8 @@
     "noImplicitReturns": false,
     "noPropertyAccessFromIndexSignature": false,
     "exactOptionalPropertyTypes": false,
-    "moduleResolution": "NodeNext"
+    "module": "esnext",
+    "moduleResolution": "node"
   },
   "include": [
     "next-env.d.ts",

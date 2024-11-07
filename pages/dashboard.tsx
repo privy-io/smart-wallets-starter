@@ -1,13 +1,12 @@
+"use client";
+
 import { usePrivy } from "@privy-io/react-auth";
 import { useSmartWallets } from "@privy-io/react-auth/smart-wallets";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { encodeFunctionData, erc721Abi } from "viem";
-import { mintAbi } from "../components/lib/abis/mint";
-
-const NFT_CONTRACT_ADDRESS =
-  "0x3331AfB9805ccF5d6cb1657a8deD0677884604A7" as const;
+import { useEffect, useState } from "react";
+import { MintManual } from "../components/MintManual";
+import { MintPrivy } from "../components/MintPrivy";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -21,56 +20,9 @@ export default function DashboardPage() {
     }
   }, [ready, authenticated, router]);
 
-  const onMint = () => {
-    if (!smartWalletClient) return;
-
-    smartWalletClient.sendTransaction({
-      to: NFT_CONTRACT_ADDRESS,
-      data: encodeFunctionData({
-        abi: mintAbi,
-        functionName: "mint",
-        args: [smartWalletClient.account.address],
-      }),
-    });
-  };
-
-  const onSetApprovalForAll = () => {
-    if (!smartWalletClient) return;
-
-    smartWalletClient.sendTransaction({
-      to: NFT_CONTRACT_ADDRESS,
-      data: encodeFunctionData({
-        abi: erc721Abi,
-        functionName: "setApprovalForAll",
-        args: [smartWalletClient.account.address, true],
-      }),
-    });
-  };
-
-  const onBatchTransaction = () => {
-    if (!smartWalletClient) return;
-
-    smartWalletClient.sendTransaction({
-      account: smartWalletClient.account,
-      calls: [
-        {
-          to: NFT_CONTRACT_ADDRESS,
-          data: encodeFunctionData({
-            abi: mintAbi,
-            functionName: "mint",
-            args: [smartWalletClient.account.address],
-          }),
-        },
-        {
-          to: NFT_CONTRACT_ADDRESS,
-          data: encodeFunctionData({
-            abi: erc721Abi,
-            functionName: "setApprovalForAll",
-            args: [smartWalletClient.account.address, true],
-          }),
-        },
-      ],
-    });
+  const [mintTestTimerStart, setMintTestTimerStart] = useState<number>(0);
+  const onMintTest = async () => {
+    setMintTestTimerStart(mintTestTimerStart + 1);
   };
 
   return (
@@ -93,24 +45,17 @@ export default function DashboardPage() {
                 Logout
               </button>
             </div>
-            <div className="mt-12 flex gap-4 flex-wrap">
+            <div className="mt-12 flex gap-4 flex-wrap items-center">
+              <MintPrivy mintTestTimerStart={mintTestTimerStart} />
+            </div>
+
+            <MintManual mintTestTimerStart={mintTestTimerStart} />
+            <div className="mt-12 flex gap-4 flex-wrap items-center">
               <button
-                onClick={onMint}
+                onClick={onMintTest}
                 className="text-sm bg-violet-600 hover:bg-violet-700 py-2 px-4 rounded-md text-white border-none"
               >
-                Mint NFT
-              </button>
-              <button
-                onClick={onSetApprovalForAll}
-                className="text-sm bg-violet-600 hover:bg-violet-700 py-2 px-4 rounded-md text-white border-none"
-              >
-                Approve
-              </button>
-              <button
-                onClick={onBatchTransaction}
-                className="text-sm bg-violet-600 hover:bg-violet-700 py-2 px-4 rounded-md text-white border-none"
-              >
-                Batch Transaction
+                Start Minting Test
               </button>
             </div>
 
