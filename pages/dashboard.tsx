@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { MintManual } from "../components/MintManual";
 import { MintPrivy } from "../components/MintPrivy";
 import { MintTestResults } from "../components/types";
+import { SvgSpinnersBarsRotateFade } from "../components/iconts/spinner";
 import { Results } from "../components/Results";
 
 const getMaxKey = (results: MintTestResults) =>
@@ -30,7 +31,8 @@ export default function DashboardPage() {
   }, [ready, authenticated, router]);
 
   const [mintTestTimerStart, setMintTestTimerStart] = useState<number>(0);
-  const onMintTest = async () => {
+  const onMintTest = async (iterations: number) => {
+    setMintEndIndex(mintTestTimerStart + iterations);
     setMintTestTimerStart(mintTestTimerStart + 1);
   };
 
@@ -41,8 +43,14 @@ export default function DashboardPage() {
   const [mintManualCompleted, setMintManualCompleted] =
     useState<boolean>(false);
 
+  const [mintEndIndex, setMintEndIndex] = useState<number>(0);
+
   useEffect(() => {
-    if (mintPrivyCompleted && mintManualCompleted && mintTestTimerStart < 10) {
+    if (
+      mintPrivyCompleted &&
+      mintManualCompleted &&
+      mintTestTimerStart < mintEndIndex
+    ) {
       setMintPrivyCompleted(false);
       setMintManualCompleted(false);
 
@@ -50,7 +58,6 @@ export default function DashboardPage() {
         getMaxKey(mintPrivyTestResults.current),
         getMaxKey(mintManualTestResults.current)
       );
-      console.log("minKey", minKey);
       setMintTestTimerStart(minKey + 1);
     }
   }, [mintPrivyCompleted, mintManualCompleted, mintTestTimerStart]);
@@ -89,16 +96,24 @@ export default function DashboardPage() {
             />
             <div className="mt-4 flex gap-4 flex-wrap items-center">
               <button
-                onClick={onMintTest}
-                className="text-sm bg-violet-600 hover:bg-violet-700 py-2 px-4 rounded-md text-white border-none"
+                onClick={() => onMintTest(10)}
+                disabled={mintTestTimerStart < mintEndIndex}
+                className="text-sm bg-violet-600 hover:bg-violet-700 py-2 px-4 rounded-md text-white border-none disabled:bg-violet-500 disabled:cursor-not-allowed flex gap-2 items-center"
               >
-                Start Minting Test
+                {mintTestTimerStart < mintEndIndex || mintEndIndex === 0
+                  ? ""
+                  : "Start "}
+                Minting Test
+                {mintTestTimerStart < mintEndIndex && (
+                  <SvgSpinnersBarsRotateFade />
+                )}
               </button>
               <Results
                 mintTestResults={[
                   mintPrivyTestResults.current,
                   mintManualTestResults.current,
                 ]}
+                resultNames={["privy", "manual"]}
               />
             </div>
 
