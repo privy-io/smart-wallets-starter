@@ -4,9 +4,18 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useSmartWallets } from "@privy-io/react-auth/smart-wallets";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MintManual } from "../components/MintManual";
 import { MintPrivy } from "../components/MintPrivy";
+import { MintTestResults } from "../components/types";
+import { Results } from "../components/Results";
+
+const getMaxKey = (results: MintTestResults) =>
+  Math.max(
+    ...Object.keys(results)
+      .map((key) => Number(key))
+      .filter((key) => !isNaN(key))
+  );
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -24,6 +33,27 @@ export default function DashboardPage() {
   const onMintTest = async () => {
     setMintTestTimerStart(mintTestTimerStart + 1);
   };
+
+  const mintPrivyTestResults = useRef<MintTestResults>({});
+  const mintManualTestResults = useRef<MintTestResults>({});
+
+  const [mintPrivyCompleted, setMintPrivyCompleted] = useState<boolean>(false);
+  const [mintManualCompleted, setMintManualCompleted] =
+    useState<boolean>(false);
+
+  useEffect(() => {
+    if (mintPrivyCompleted && mintManualCompleted && mintTestTimerStart < 10) {
+      setMintPrivyCompleted(false);
+      setMintManualCompleted(false);
+
+      const minKey = Math.min(
+        getMaxKey(mintPrivyTestResults.current),
+        getMaxKey(mintManualTestResults.current)
+      );
+      console.log("minKey", minKey);
+      setMintTestTimerStart(minKey + 1);
+    }
+  }, [mintPrivyCompleted, mintManualCompleted, mintTestTimerStart]);
 
   return (
     <>
@@ -46,17 +76,30 @@ export default function DashboardPage() {
               </button>
             </div>
             <div className="mt-12 flex gap-4 flex-wrap items-center">
-              <MintPrivy mintTestTimerStart={mintTestTimerStart} />
+              <MintPrivy
+                mintTestTimerStart={mintTestTimerStart}
+                mintTestResults={mintPrivyTestResults}
+                setMintCompleted={setMintPrivyCompleted}
+              />
             </div>
-
-            <MintManual mintTestTimerStart={mintTestTimerStart} />
-            <div className="mt-12 flex gap-4 flex-wrap items-center">
+            <MintManual
+              mintTestTimerStart={mintTestTimerStart}
+              mintTestResults={mintManualTestResults}
+              setMintCompleted={setMintManualCompleted}
+            />
+            <div className="mt-4 flex gap-4 flex-wrap items-center">
               <button
                 onClick={onMintTest}
                 className="text-sm bg-violet-600 hover:bg-violet-700 py-2 px-4 rounded-md text-white border-none"
               >
                 Start Minting Test
               </button>
+              <Results
+                mintTestResults={[
+                  mintPrivyTestResults.current,
+                  mintManualTestResults.current,
+                ]}
+              />
             </div>
 
             <p className="mt-6 font-bold uppercase text-sm text-gray-600">

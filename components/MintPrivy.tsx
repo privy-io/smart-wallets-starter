@@ -5,12 +5,13 @@ import { mintAbi } from "../components/lib/abis/mint";
 import { LinkIcon } from "./iconts/link";
 import { SvgSpinnersBarsRotateFade } from "./iconts/spinner";
 import { NFT_CONTRACT_ADDRESS } from "./lib/constants";
+import { MintTesterProps } from "./types";
 
 export const MintPrivy = ({
   mintTestTimerStart,
-}: {
-  mintTestTimerStart: number;
-}) => {
+  mintTestResults,
+  setMintCompleted,
+}: MintTesterProps) => {
   const { client: smartWalletClient } = useSmartWallets();
   const [mintingTime, setMintingTime] = useState<number>(0);
   const [minting, setMinting] = useState<boolean>(false);
@@ -32,6 +33,14 @@ export const MintPrivy = ({
     setMinting(false);
     setMintingTime(endTime - startTime);
     setMintReceipt(hash);
+    mintTestResults.current = {
+      ...mintTestResults.current,
+      [mintTestTimerStart]: {
+        time: endTime - startTime,
+        receipt: hash,
+      },
+    };
+    setMintCompleted(true);
   };
 
   useEffect(() => {

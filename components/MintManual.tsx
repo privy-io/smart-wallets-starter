@@ -17,6 +17,7 @@ import { base } from "viem/chains";
 import { mintAbi } from "./lib/abis/mint";
 import { SvgSpinnersBarsRotateFade } from "./iconts/spinner";
 import { LinkIcon } from "./iconts/link";
+import { MintTesterProps, MintTestResults } from "./types";
 
 const awaitReceipt = async (
   bundlerClient: SmartAccountClient,
@@ -41,9 +42,9 @@ const NFT_CONTRACT_ADDRESS =
   "0x3331AfB9805ccF5d6cb1657a8deD0677884604A7" as const;
 export function MintManual({
   mintTestTimerStart,
-}: {
-  mintTestTimerStart: number;
-}) {
+  mintTestResults,
+  setMintCompleted,
+}: MintTesterProps) {
   const paymaster = createPaymasterClient({
     transport: http(
       `https://api.pimlico.io/v2/8453/rpc?apikey=pim_AgrGPiuPf39qALuR42XMM2`
@@ -150,7 +151,19 @@ export function MintManual({
         signature,
       } as UserOperation);
 
-      setReceipt(await awaitReceipt(bundlerClient, hash));
+      const receipt = await awaitReceipt(bundlerClient, hash);
+
+      setReceipt(receipt);
+      if (receipt) {
+        mintTestResults.current = {
+          ...mintTestResults.current,
+          [mintTestTimerStart]: {
+            time: Date.now() - startTime,
+            receipt: receipt.receipt.transactionHash,
+          },
+        };
+        setMintCompleted(true);
+      }
     } catch (error) {
       console.error(error);
     }
