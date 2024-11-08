@@ -23,6 +23,7 @@ import { mintAbi } from "./lib/abis/mint";
 import { NFT_CONTRACT_ADDRESS } from "./lib/constants";
 import { MintTesterProps } from "./types";
 import { useTimer } from "react-use-precision-timer";
+import { bundlerTypeStyles, getUrlType } from "./utils/urlType";
 
 export function MintWithTimer({
   mintTestTimerStart,
@@ -153,7 +154,11 @@ export function MintWithTimer({
       <div className="my-2 flex gap-4 flex-wrap items-center">
         <button
           onClick={onMint}
-          className="text-sm bg-violet-600 hover:bg-violet-700 py-2 px-4 rounded-md text-white border-none flex gap-2 items-center disabled:bg-violet-400 disabled:cursor-not-allowed"
+          className={`text-sm ${
+            bundlerTypeStyles[getUrlType(bundlerUrl)]
+          } hover:opacity-90 py-2 px-4 rounded-md text-white border-none flex gap-2 items-center disabled:opacity-70 disabled:cursor-not-allowed w-48 justify-center ${
+            minting ? "animate-pulse" : ""
+          }`}
           disabled={minting}
         >
           Mint{minting ? "ing " : ""} - {name}
@@ -161,7 +166,7 @@ export function MintWithTimer({
         </button>
 
         {receipt ? (
-          <div>
+          <div className="flex gap-1 items-center w-36">
             <a
               href={`https://basescan.org/tx/${receipt.receipt.transactionHash}`}
               target="_blank"
@@ -174,7 +179,7 @@ export function MintWithTimer({
             </a>
           </div>
         ) : (
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-600 flex gap-1 items-center w-36">
             {timer.getElapsedRunningTime()}ms
           </div>
         )}
