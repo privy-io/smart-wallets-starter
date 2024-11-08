@@ -30,6 +30,7 @@ export function MintWithTimer({
   bundlerUrl,
   paymasterUrl,
   privateKey,
+  name,
 }: MintTesterProps) {
   const paymaster = createPaymasterClient({
     transport: http(paymasterUrl),
@@ -149,7 +150,7 @@ export function MintWithTimer({
           onClick={onMint}
           className="text-sm bg-violet-600 hover:bg-violet-700 py-2 px-4 rounded-md text-white border-none flex gap-2 items-center"
         >
-          Mint{minting ? "ing" : ""}{" "}
+          Mint{minting ? "ing " : ""} {name}
           {minting ? <SvgSpinnersBarsRotateFade /> : ""}
         </button>
 

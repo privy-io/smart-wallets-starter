@@ -15,4 +15,5 @@ export type MintTesterProps = {
   setMintCompleted: (completed: boolean) => void;
   bundlerUrl: string;
   paymasterUrl: string;
+  name: string;
 };

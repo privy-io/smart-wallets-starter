@@ -89,6 +89,7 @@ export default function DashboardPage() {
                     bundlerUrl={config.bundlerUrl}
                     paymasterUrl={config.paymasterUrl}
                     privateKey={config.privateKey}
+                    name={`${index + 1}`}
                   />
                 </div>
               );
