@@ -168,7 +168,8 @@ export function MintWithTimer({
           <div className="text-sm text-gray-600">{mintingTime}ms</div>
         )}
       </div>
-      <div>Bundler: {bundlerUrl}</div>
+      <div className="text-xs text-gray-600">Bundler: {bundlerUrl}</div>
+      <div className="text-xs text-gray-600">Paymaster: {paymasterUrl}</div>
     </div>
   );
 }
