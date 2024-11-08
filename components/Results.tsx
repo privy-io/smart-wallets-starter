@@ -81,13 +81,18 @@ export const Results = ({
         />
         <Tooltip />
         <Legend />
-        <Line
-          type="monotone"
-          dataKey="mint-1"
-          stroke="#8884d8"
-          activeDot={{ r: 8 }}
-        />
-        <Line type="monotone" dataKey="mint-2" stroke="#82ca9d" />
+        {mintTestResults.map((_, index) => (
+          <Line
+            key={index}
+            type="monotone"
+            dataKey={`mint-${index + 1}`}
+            // Generate color based on index, AI suggested formula, not important
+            stroke={`#${(index * 433700 + 12345)
+              .toString(16)
+              .padStart(6, "0")}`}
+            activeDot={{ r: 8 }}
+          />
+        ))}
       </LineChart>
     </div>
   );
