@@ -27,6 +27,7 @@ export const Results = ({
     });
   });
 
+  // TODO: make this dynamic
   const data: {
     name: string;
     "mint-1": number | undefined;
