@@ -68,14 +68,14 @@ export default function DashboardPage() {
   return (
     <>
       <Head>
-        <title>Smart Wallets Bundler/Paymster Comparison</title>
+        <title>Smart Wallets Bundler/Paymaster Comparison</title>
       </Head>
 
       <main className="flex flex-col min-h-screen px-4 sm:px-20 py-6 sm:py-10 bg-privy-light-blue">
         <div>
           <div className="flex flex-row justify-between">
             <h1 className="text-2xl font-semibold">
-              Smart Wallets Bundler/Paymster Comparison
+              Smart Wallets Bundler/Paymaster Comparison
             </h1>
           </div>
 
@@ -100,7 +100,7 @@ export default function DashboardPage() {
             <button
               onClick={() => onMintTest(10)}
               disabled={mintTestTimerStart < mintEndIndex}
-              className="text-sm bg-violet-600 hover:bg-violet-700 py-2 px-4 rounded-md text-white border-none disabled:bg-violet-500 disabled:cursor-not-allowed flex gap-2 items-center"
+              className="text-sm bg-violet-600 hover:bg-violet-700 py-2 px-4 rounded-md text-white border-none disabled:bg-violet-400 disabled:cursor-not-allowed flex gap-2 items-center"
             >
               {mintTestTimerStart < mintEndIndex || mintEndIndex === 0
                 ? ""
@@ -110,12 +110,16 @@ export default function DashboardPage() {
                 <SvgSpinnersBarsRotateFade />
               )}
             </button>
+            <button
+              onClick={() => setMintEndIndex(mintTestTimerStart)}
+              className="text-sm bg-violet-600 hover:bg-violet-700 py-2 px-4 rounded-md text-white border-none disabled:bg-violet-400 disabled:cursor-not-allowed flex gap-2 items-center"
+              disabled={mintTestTimerStart === mintEndIndex}
+            >
+              Stop
+            </button>
             <Results
               mintTestResults={mintTestResults.map((ref) => ref.current)}
               config={testingConfig}
-              resultNames={mintTestResults.map(
-                (_, index) => `mint-${index + 1}`
-              )}
             />
           </div>
         </div>

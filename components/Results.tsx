@@ -23,11 +23,9 @@ const getBundlerType = (config: Config, index: number) =>
 export const Results = ({
   mintTestResults,
   config,
-  resultNames,
 }: {
   mintTestResults: MintTestResults[];
   config: Config;
-  resultNames: string[];
 }) => {
   const dataMap = mintTestResults.map((results) => {
     return Object.entries(results).map(([key, value]) => {
