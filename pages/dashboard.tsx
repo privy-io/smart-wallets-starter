@@ -10,6 +10,7 @@ import { MintPrivy } from "../components/MintPrivy";
 import { MintTestResults } from "../components/types";
 import { SvgSpinnersBarsRotateFade } from "../components/iconts/spinner";
 import { Results } from "../components/Results";
+import { MintPrivyLL } from "../components/MintPrivyLL";
 
 const getMaxKey = (results: MintTestResults) =>
   Math.max(
@@ -37,9 +38,12 @@ export default function DashboardPage() {
   };
 
   const mintPrivyTestResults = useRef<MintTestResults>({});
+  const mintPrivyLLTestResults = useRef<MintTestResults>({});
   const mintManualTestResults = useRef<MintTestResults>({});
 
   const [mintPrivyCompleted, setMintPrivyCompleted] = useState<boolean>(false);
+  const [mintPrivyLLCompleted, setMintPrivyLLCompleted] =
+    useState<boolean>(false);
   const [mintManualCompleted, setMintManualCompleted] =
     useState<boolean>(false);
 
@@ -56,11 +60,17 @@ export default function DashboardPage() {
 
       const minKey = Math.min(
         getMaxKey(mintPrivyTestResults.current),
+        getMaxKey(mintPrivyLLTestResults.current),
         getMaxKey(mintManualTestResults.current)
       );
       setMintTestTimerStart(minKey + 1);
     }
-  }, [mintPrivyCompleted, mintManualCompleted, mintTestTimerStart]);
+  }, [
+    mintPrivyCompleted,
+    mintPrivyLLCompleted,
+    mintManualCompleted,
+    mintTestTimerStart,
+  ]);
 
   return (
     <>
@@ -89,6 +99,13 @@ export default function DashboardPage() {
                 setMintCompleted={setMintPrivyCompleted}
               />
             </div>
+            <div className="mt-4 flex gap-4 flex-wrap items-center">
+              <MintPrivyLL
+                mintTestTimerStart={mintTestTimerStart}
+                mintTestResults={mintPrivyLLTestResults}
+                setMintCompleted={setMintPrivyLLCompleted}
+              />
+            </div>
             <MintManual
               mintTestTimerStart={mintTestTimerStart}
               mintTestResults={mintManualTestResults}
@@ -111,9 +128,10 @@ export default function DashboardPage() {
               <Results
                 mintTestResults={[
                   mintPrivyTestResults.current,
+                  mintPrivyLLTestResults.current,
                   mintManualTestResults.current,
                 ]}
-                resultNames={["privy", "manual"]}
+                resultNames={["privy", "privy-ll", "manual"]}
               />
             </div>
 

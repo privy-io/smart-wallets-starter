@@ -7,7 +7,11 @@ import { SvgSpinnersBarsRotateFade } from "./iconts/spinner";
 import { NFT_CONTRACT_ADDRESS } from "./lib/constants";
 import { MintTesterProps } from "./types";
 
-export const MintPrivy = ({
+/**
+ * This mint uses Privy's smart wallets but with underlying calls from smartWalletClient.sendTransaction
+ */
+
+export const MintPrivyLL = ({
   mintTestTimerStart,
   mintTestResults,
   setMintCompleted,
@@ -18,23 +22,35 @@ export const MintPrivy = ({
   const [mintReceipt, setMintReceipt] = useState<string>("");
   const onMint = async () => {
     if (!smartWalletClient) return;
-    console.log(smartWalletClient.pollingInterval);
-    smartWalletClient.pollingInterval = 500;
 
     setMinting(true);
     const startTime = Date.now();
-    const hash = await smartWalletClient.sendTransaction({
-      to: NFT_CONTRACT_ADDRESS,
-      data: encodeFunctionData({
-        abi: mintAbi,
-        functionName: "mint",
-        args: [smartWalletClient.account.address],
-      }),
+
+    // Prepare the user operation
+    const hash = await smartWalletClient.sendUserOperation({
+      calls: [
+        {
+          to: NFT_CONTRACT_ADDRESS,
+          data: encodeFunctionData({
+            abi: mintAbi,
+            functionName: "mint",
+            args: [smartWalletClient.account.address],
+          }),
+        },
+      ],
     });
+
+    // Wait for the receipt, but with polling interval set to 500ms and higher corresponding retry count
+    const receipt = await smartWalletClient.waitForUserOperationReceipt({
+      hash,
+      pollingInterval: 500,
+      retryCount: 12,
+    });
+
     const endTime = Date.now();
     setMinting(false);
     setMintingTime(endTime - startTime);
-    setMintReceipt(hash);
+    setMintReceipt(receipt.receipt.transactionHash);
     mintTestResults.current = {
       ...mintTestResults.current,
       [mintTestTimerStart]: {
@@ -57,7 +73,7 @@ export const MintPrivy = ({
         className="text-sm bg-violet-600 hover:bg-violet-700 py-2 px-4 rounded-md text-white border-none flex gap-2 items-center"
       >
         Mint{minting ? "ing" : ""}{" "}
-        {minting ? <SvgSpinnersBarsRotateFade /> : "with Privy"}
+        {minting ? <SvgSpinnersBarsRotateFade /> : "with Privy LL"}
       </button>
       {mintReceipt ? (
         <a

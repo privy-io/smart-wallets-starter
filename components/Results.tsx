@@ -9,7 +9,6 @@ import {
   XAxis,
   Legend,
 } from "recharts";
-import { Hash } from "viem";
 
 export const Results = ({
   mintTestResults,
@@ -34,12 +33,18 @@ export const Results = ({
     });
   });
 
-  const data: { name: string; privy: number; manual: number }[] = [];
+  const data: {
+    name: string;
+    privy: number;
+    "privy-ll": number;
+    manual: number;
+  }[] = [];
   dataMap[0]?.forEach((element, index) => {
     data.push({
       name: element.name,
       [resultNames[0] as "privy"]: element.time,
-      [resultNames[1] as "manual"]: dataMap[1]?.[index]?.time || 0,
+      [resultNames[1] as "privy-ll"]: dataMap[1]?.[index]?.time || 0,
+      [resultNames[2] as "manual"]: dataMap[2]?.[index]?.time || 0,
     });
   });
 
@@ -82,6 +87,12 @@ export const Results = ({
           dataKey="privy"
           stroke="#8884d8"
           activeDot={{ r: 8 }}
+        />
+        <Line
+          type="monotone"
+          dataKey="privy-ll"
+          stroke="#c2169a"
+          strokeDasharray="5 5"
         />
         <Line type="monotone" dataKey="manual" stroke="#82ca9d" />
       </LineChart>
