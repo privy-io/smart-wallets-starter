@@ -46,12 +46,24 @@ export default function DashboardPage() {
   const mintsCompleted = [useState<boolean>(false), useState<boolean>(false)];
 
   const [mintEndIndex, setMintEndIndex] = useState<number>(0);
+  const isActive = mintTestTimerStart < mintEndIndex;
+
+  // Just a boolean to force a check on the timer
+  const [timerBool, setTimerBool] = useState<boolean>(false);
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined = undefined;
+    if (isActive) {
+      timer = setInterval(() => {
+        setTimerBool(!timerBool);
+      }, 100);
+    } else {
+      if (timer) clearInterval(timer);
+    }
+    return () => clearInterval(timer);
+  }, [isActive, timerBool]);
 
   useEffect(() => {
-    if (
-      mintsCompleted.every((completed) => completed[0]) &&
-      mintTestTimerStart < mintEndIndex
-    ) {
+    if (mintsCompleted.every((completed) => completed[0]) && isActive) {
       mintsCompleted.forEach((completed) => {
         completed[1](false);
       });
@@ -63,7 +75,11 @@ export default function DashboardPage() {
       );
       setMintTestTimerStart(minKey + 1);
     }
-  }, [mintsCompleted.map((completed) => completed[0]), mintTestTimerStart]);
+  }, [
+    mintsCompleted.map((completed) => completed[0]),
+    mintTestTimerStart,
+    isActive,
+  ]);
 
   return (
     <>
@@ -99,16 +115,12 @@ export default function DashboardPage() {
           <div className="mt-4 flex gap-4 flex-wrap items-center">
             <button
               onClick={() => onMintTest(10)}
-              disabled={mintTestTimerStart < mintEndIndex}
+              disabled={isActive}
               className="text-sm bg-violet-600 hover:bg-violet-700 py-2 px-4 rounded-md text-white border-none disabled:bg-violet-400 disabled:cursor-not-allowed flex gap-2 items-center"
             >
-              {mintTestTimerStart < mintEndIndex || mintEndIndex === 0
-                ? ""
-                : "Start "}
+              {isActive || mintEndIndex === 0 ? "" : "Start "}
               Minting Test
-              {mintTestTimerStart < mintEndIndex && (
-                <SvgSpinnersBarsRotateFade />
-              )}
+              {isActive && <SvgSpinnersBarsRotateFade />}
             </button>
             <button
               onClick={() => setMintEndIndex(mintTestTimerStart)}

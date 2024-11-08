@@ -168,14 +168,14 @@ export function MintWithTimer({
               className="flex gap-1 items-center"
             >
               <div className="text-sm text-gray-600">
-                {timer.getElapsedStartedTime()}ms{" "}
+                {timer.getElapsedRunningTime()}ms{" "}
               </div>
               <LinkIcon />
             </a>
           </div>
         ) : (
           <div className="text-sm text-gray-600">
-            {timer.getElapsedStartedTime()}ms
+            {timer.getElapsedRunningTime()}ms
           </div>
         )}
       </div>
