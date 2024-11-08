@@ -27,17 +27,23 @@ export const Results = ({
     });
   });
 
-  // TODO: make this dynamic
   const data: {
     name: string;
-    "mint-1": number | undefined;
-    "mint-2": number | undefined;
+    [key: `mint-${number}`]: number | undefined;
   }[] = [];
-  dataMap[0]?.forEach((element, index) => {
+  dataMap[0]?.forEach((element, elementIndex) => {
     data.push({
       name: element.name,
-      [resultNames[0] as "mint-1"]: element.time,
-      [resultNames[1] as "mint-2"]: dataMap[1]?.[index]?.time || undefined,
+      ...mintTestResults
+        .map((_, index) => {
+          return {
+            [`mint-${index + 1}`]:
+              dataMap[index]?.[elementIndex]?.time || undefined,
+          };
+        })
+        .reduce((acc, curr) => {
+          return { ...acc, ...curr };
+        }, {}),
     });
   });
 
