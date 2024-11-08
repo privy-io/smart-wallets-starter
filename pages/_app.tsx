@@ -1,8 +1,5 @@
-import { PrivyProvider } from "@privy-io/react-auth";
-import { SmartWalletsProvider } from "@privy-io/react-auth/smart-wallets";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import { base } from "viem/chains";
 import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -42,21 +39,8 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>Privy Auth Starter</title>
         <meta name="description" content="Privy Auth Starter" />
       </Head>
-      <PrivyProvider
-        appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ""}
-        config={{
-          defaultChain: base,
-          supportedChains: [base],
-          embeddedWallets: {
-            createOnLogin: "all-users",
-            showWalletUIs: false,
-          },
-        }}
-      >
-        <SmartWalletsProvider>
-          <Component {...pageProps} />
-        </SmartWalletsProvider>
-      </PrivyProvider>
+
+      <Component {...pageProps} />
     </>
   );
 }

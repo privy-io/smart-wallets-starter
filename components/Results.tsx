@@ -17,12 +17,6 @@ export const Results = ({
   mintTestResults: MintTestResults[];
   resultNames: string[];
 }) => {
-  // transform data into:
-  // {
-  //   name: "Mint {index}",
-  //   privy: 4000,
-  //   manual: 2400,
-  // }[],
   const dataMap = mintTestResults.map((results) => {
     return Object.entries(results).map(([key, value]) => {
       return {
@@ -35,16 +29,14 @@ export const Results = ({
 
   const data: {
     name: string;
-    privy: number;
-    "privy-ll": number;
-    manual: number;
+    "mint-1": number | undefined;
+    "mint-2": number | undefined;
   }[] = [];
   dataMap[0]?.forEach((element, index) => {
     data.push({
       name: element.name,
-      [resultNames[0] as "privy"]: element.time,
-      [resultNames[1] as "privy-ll"]: dataMap[1]?.[index]?.time || 0,
-      [resultNames[2] as "manual"]: dataMap[2]?.[index]?.time || 0,
+      [resultNames[0] as "mint-1"]: element.time,
+      [resultNames[1] as "mint-2"]: dataMap[1]?.[index]?.time || undefined,
     });
   });
 
@@ -84,17 +76,11 @@ export const Results = ({
         <Legend />
         <Line
           type="monotone"
-          dataKey="privy"
+          dataKey="mint-1"
           stroke="#8884d8"
           activeDot={{ r: 8 }}
         />
-        <Line
-          type="monotone"
-          dataKey="privy-ll"
-          stroke="#c2169a"
-          strokeDasharray="5 5"
-        />
-        <Line type="monotone" dataKey="manual" stroke="#82ca9d" />
+        <Line type="monotone" dataKey="mint-2" stroke="#82ca9d" />
       </LineChart>
     </div>
   );

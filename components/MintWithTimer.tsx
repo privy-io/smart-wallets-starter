@@ -9,50 +9,30 @@ import {
 } from "permissionless/accounts";
 import { createPimlicoClient } from "permissionless/clients/pimlico";
 import { useEffect, useState } from "react";
-import { createPublicClient, encodeFunctionData, Hex, http } from "viem";
+import { createPublicClient, encodeFunctionData, http } from "viem";
 import {
   createPaymasterClient,
   entryPoint07Address,
   GetUserOperationReceiptReturnType,
-  UserOperation,
 } from "viem/account-abstraction";
 import { privateKeyToAccount } from "viem/accounts";
 import { base } from "viem/chains";
-import { mintAbi } from "./lib/abis/mint";
-import { SvgSpinnersBarsRotateFade } from "./iconts/spinner";
 import { LinkIcon } from "./iconts/link";
-import { MintTesterProps, MintTestResults } from "./types";
+import { SvgSpinnersBarsRotateFade } from "./iconts/spinner";
+import { mintAbi } from "./lib/abis/mint";
+import { NFT_CONTRACT_ADDRESS } from "./lib/constants";
+import { MintTesterProps } from "./types";
 
-const awaitReceipt = async (
-  bundlerClient: SmartAccountClient,
-  hash: Hex
-): Promise<GetUserOperationReceiptReturnType | undefined> => {
-  return new Promise(async (resolve) => {
-    let receipt: GetUserOperationReceiptReturnType | undefined = undefined;
-
-    try {
-      receipt = await bundlerClient.getUserOperationReceipt({ hash });
-      resolve(receipt);
-    } catch (err) {
-      setTimeout(async () => {
-        receipt = await awaitReceipt(bundlerClient, hash);
-        resolve(receipt);
-      }, 500);
-    }
-  });
-};
-
-const NFT_CONTRACT_ADDRESS =
-  "0x3331AfB9805ccF5d6cb1657a8deD0677884604A7" as const;
-export function MintManual({
+export function MintWithTimer({
   mintTestTimerStart,
   mintTestResults,
   setMintCompleted,
+  bundlerUrl,
+  paymasterUrl,
+  privateKey,
 }: MintTesterProps) {
   const paymaster = createPaymasterClient({
-    transport: http(
-      `https://api.pimlico.io/v2/8453/rpc?apikey=pim_AgrGPiuPf39qALuR42XMM2`
-    ),
+    transport: http(paymasterUrl),
   });
 
   const publicClient = createPublicClient({
@@ -61,9 +41,6 @@ export function MintManual({
   });
 
   const [account, setAccount] = useState<ToSafeSmartAccountReturnType>();
-
-  const privateKey =
-    "0xf012130d64537780b8308d01a887deb2ecb2b4fea8b0cbcf09eabc81735cb395";
 
   useEffect(() => {
     const getAccount = async () =>
@@ -86,9 +63,7 @@ export function MintManual({
   const [bundlerClient, setBundlerClient] = useState<SmartAccountClient>();
 
   const pimlicoClient = createPimlicoClient({
-    transport: http(
-      `https://api.pimlico.io/v2/8453/rpc?apikey=pim_AgrGPiuPf39qALuR42XMM2`
-    ),
+    transport: http(bundlerUrl),
     entryPoint: {
       address: entryPoint07Address,
       version: "0.7",
@@ -103,9 +78,7 @@ export function MintManual({
       account,
       paymaster,
       chain: base,
-      bundlerTransport: http(
-        `https://api.pimlico.io/v2/8453/rpc?apikey=pim_AgrGPiuPf39qALuR42XMM2`
-      ),
+      bundlerTransport: http(bundlerUrl),
       userOperation: {
         estimateFeesPerGas: async () => {
           return (await pimlicoClient.getUserOperationGasPrice()).fast;
@@ -132,8 +105,7 @@ export function MintManual({
     setMinting(true);
     const startTime = Date.now();
     try {
-      const userOperation = await bundlerClient.prepareUserOperation({
-        account: bundlerClient.account,
+      const hash = await bundlerClient.sendUserOperation({
         calls: [
           {
             to: NFT_CONTRACT_ADDRESS,
@@ -146,16 +118,11 @@ export function MintManual({
         ],
       });
 
-      const signature = await account?.signUserOperation(
-        userOperation as UserOperation
-      );
-
-      const hash = await bundlerClient.sendUserOperation({
-        ...userOperation,
-        signature,
-      } as UserOperation);
-
-      const receipt = await awaitReceipt(bundlerClient, hash);
+      const receipt = await bundlerClient.waitForUserOperationReceipt({
+        hash,
+        pollingInterval: 500,
+        retryCount: 12,
+      });
 
       setReceipt(receipt);
       if (receipt) {
@@ -201,7 +168,7 @@ export function MintManual({
           <div className="text-sm text-gray-600">{mintingTime}ms</div>
         )}
       </div>
-      <div>Smart account address: {bundlerClient?.account?.address}</div>
+      <div>Bundler: {bundlerUrl}</div>
     </div>
   );
 }

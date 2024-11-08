@@ -1,4 +1,5 @@
 import { MutableRefObject } from "react";
+import { Hex } from "viem";
 
 export type MintTestResults = {
   [key: number]: {
@@ -8,7 +9,10 @@ export type MintTestResults = {
 };
 
 export type MintTesterProps = {
+  privateKey: Hex;
   mintTestTimerStart: number;
   mintTestResults: MutableRefObject<MintTestResults>;
   setMintCompleted: (completed: boolean) => void;
+  bundlerUrl: string;
+  paymasterUrl: string;
 };
