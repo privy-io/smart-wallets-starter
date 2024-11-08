@@ -7,6 +7,7 @@ import { SvgSpinnersBarsRotateFade } from "../components/iconts/spinner";
 import { MintWithTimer } from "../components/MintWithTimer";
 import { Results } from "../components/Results";
 import { MintTestResults } from "../components/types";
+import { getUrlType } from "../components/utils/urlType";
 
 const getMaxKey = (results: MintTestResults) =>
   Math.max(
@@ -89,7 +90,7 @@ export default function DashboardPage() {
                     bundlerUrl={config.bundlerUrl}
                     paymasterUrl={config.paymasterUrl}
                     privateKey={config.privateKey}
-                    name={`${index + 1}`}
+                    name={getUrlType(config.bundlerUrl)}
                   />
                 </div>
               );
@@ -111,6 +112,7 @@ export default function DashboardPage() {
             </button>
             <Results
               mintTestResults={mintTestResults.map((ref) => ref.current)}
+              config={testingConfig}
               resultNames={mintTestResults.map(
                 (_, index) => `mint-${index + 1}`
               )}

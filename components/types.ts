@@ -17,3 +17,5 @@ export type MintTesterProps = {
   paymasterUrl: string;
   name: string;
 };
+
+export type BundlerTypes = "zerodev" | "pimlico" | "unknown";

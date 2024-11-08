@@ -145,12 +145,12 @@ export function MintWithTimer({
 
   return (
     <div>
-      <div className="mt-4 flex gap-4 flex-wrap items-center">
+      <div className="my-2 flex gap-4 flex-wrap items-center">
         <button
           onClick={onMint}
           className="text-sm bg-violet-600 hover:bg-violet-700 py-2 px-4 rounded-md text-white border-none flex gap-2 items-center"
         >
-          Mint{minting ? "ing " : ""} {name}
+          Mint{minting ? "ing " : ""} - {name}
           {minting ? <SvgSpinnersBarsRotateFade /> : ""}
         </button>
 
