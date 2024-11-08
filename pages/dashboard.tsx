@@ -109,11 +109,10 @@ export default function DashboardPage() {
               )}
             </button>
             <Results
-              mintTestResults={[
-                mintTestResults[0]!.current,
-                mintTestResults[1]!.current,
-              ]}
-              resultNames={["mint-1", "mint-2"]}
+              mintTestResults={mintTestResults.map((ref) => ref.current)}
+              resultNames={mintTestResults.map(
+                (_, index) => `mint-${index + 1}`
+              )}
             />
           </div>
         </div>
