@@ -12,9 +12,9 @@
     "lint": "next lint && npx prettier --check \"{__tests__,components,pages,styles}/**/*.{ts,tsx,js,jsx}\" && npx tsc --noEmit"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.3",
+    "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.0.12",
-    "@privy-io/react-auth": "1.92.6",
+    "@privy-io/react-auth": "1.94.0-beta-20241108221140",
     "@privy-io/server-auth": "1.15.3",
     "@tailwindcss/forms": "^0.5.3",
     "next": "latest",
