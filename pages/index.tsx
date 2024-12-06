@@ -34,7 +34,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { login } = useLogin({
     onComplete: () => router.push("/dashboard"),
-  });
+  });``
 
   return (
     <>

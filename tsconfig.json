@@ -23,7 +23,7 @@
     "noPropertyAccessFromIndexSignature": false,
     "exactOptionalPropertyTypes": false,
     "module": "esnext",
-    "moduleResolution": "bundler"
+    "moduleResolution": "node"
   },
   "include": [
     "next-env.d.ts",
