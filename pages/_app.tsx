@@ -49,6 +49,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           supportedChains: [baseSepolia],
           embeddedWallets: {
             createOnLogin: "all-users",
+            showWalletUIs: false,
           },
         }}
       >
