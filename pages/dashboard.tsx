@@ -47,11 +47,10 @@ export default function DashboardPage() {
     });
   };
 
-  const onBatchTransaction = () => {
+  const onBatchTransaction = async () => {
     if (!smartWalletClient) return;
 
-    smartWalletClient.sendTransaction({
-      account: smartWalletClient.account,
+    const batchTxn = await smartWalletClient.sendUserOperation({
       calls: [
         {
           to: NFT_CONTRACT_ADDRESS,
@@ -71,6 +70,13 @@ export default function DashboardPage() {
         },
       ],
     });
+
+    const returned = await smartWalletClient.waitForUserOperationReceipt({
+      hash: batchTxn,
+      pollingInterval: 100,
+    });
+
+    console.log("Batch transaction receipt:", returned);
   };
 
   return (
