@@ -1,5 +1,7 @@
 # Privy `smart-wallets` Starter
 
+> **This repository is archived.** For up-to-date examples, please visit [github.com/privy-io/examples](https://github.com/privy-io/examples).
+
 This is a template for using smart wallets with [**Privy Auth**](https://www.privy.io/) in a [NextJS](https://nextjs.org/) project.
 
 ## Prerequisites
